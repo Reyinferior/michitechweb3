@@ -271,6 +271,63 @@ if(form){
   setInterval(tick, 1000);
 })();
 
+// ===== Responsive adjustments for floating elements =====
+(function(){
+  const chatbot = document.getElementById('aiChatbot');
+  const waFloat = document.querySelector('.wa-float');
+  const chatToggle = document.getElementById('chatbotToggle');
+  
+  const adjustFloatingElements = () => {
+    const isMobile = window.innerWidth <= 480;
+    const isTablet = window.innerWidth <= 768;
+    
+    if (chatbot && waFloat) {
+      if (isMobile) {
+        // En móvil, ajustar posiciones para evitar superposición
+        chatbot.style.right = '10px';
+        chatbot.style.bottom = '80px';
+        chatbot.style.width = 'calc(100vw - 20px)';
+        chatbot.style.maxWidth = '360px';
+        chatbot.style.height = '450px';
+        
+        waFloat.style.right = '10px';
+        waFloat.style.bottom = '80px';
+        waFloat.style.width = '48px';
+        waFloat.style.height = '48px';
+        
+        // Cuando el chatbot está abierto, mover WhatsApp más abajo
+        if (chatbot.getAttribute('aria-hidden') === 'false') {
+          waFloat.style.bottom = '140px';
+        }
+      } else if (isTablet) {
+        // En tablet, posiciones intermedias
+        chatbot.style.right = '16px';
+        chatbot.style.bottom = '90px';
+        waFloat.style.right = '16px';
+        waFloat.style.bottom = '90px';
+      } else {
+        // En desktop, posiciones originales
+        chatbot.style.right = '20px';
+        chatbot.style.bottom = '100px';
+        waFloat.style.right = '16px';
+        waFloat.style.bottom = '100px';
+      }
+    }
+  };
+  
+  // Ajustar al cargar y al redimensionar
+  adjustFloatingElements();
+  window.addEventListener('resize', adjustFloatingElements, { passive: true });
+  
+  // Observar cambios en el chatbot para ajustar WhatsApp
+  if (chatbot && waFloat) {
+    const observer = new MutationObserver(() => {
+      adjustFloatingElements();
+    });
+    observer.observe(chatbot, { attributes: true, attributeFilter: ['aria-hidden'] });
+  }
+})();
+
 // ===== Chatbot con IA =====
 (function(){
   const chatbot = document.getElementById('aiChatbot');
