@@ -156,7 +156,7 @@ const formMsg = document.getElementById('formMsg');
   show(0);
 })();
 
-// Envío del formulario compatible con n8n (FormData, sin headers para evitar preflight CORS)
+// Envío del formulario mejorado con tracking y mejor UX
 if(form){
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
@@ -166,21 +166,182 @@ if(form){
     // Honeypot opcional (añade <input name="website" class="sr-only" tabindex="-1" autocomplete="off"> en el HTML)
     if(fd.get('website')){ if(formMsg) formMsg.textContent=''; return; }
 
+    // Agregar timestamp y fuente
+    fd.append('timestamp', new Date().toISOString());
+    fd.append('source', 'website');
+    fd.append('user_agent', navigator.userAgent);
+
     try{
       const res = await fetch(form.action, {
         method:'POST',
         body: fd,
-        // n8n acepta CORS por defecto en webhooks; mantener sin headers evita preflight
         mode:'cors'
       });
-      if(!res.ok) throw new Error('Error al enviar');
-      if(formMsg) formMsg.textContent = '¡Listo! Te contactamos pronto.';
+      
+      if(!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      
+      // Éxito
+      if(formMsg) {
+        formMsg.innerHTML = '🎉 <strong>¡Listo!</strong> Te contactamos en las próximas 24 horas.';
+        formMsg.style.color = '#22c55e';
+      }
+      
       form.reset();
+      
+      // Mostrar mensaje de agradecimiento
+      setTimeout(() => {
+        if(formMsg) {
+          formMsg.innerHTML = '💬 Mientras tanto, puedes chatear con <strong>Mishi AI</strong> para resolver dudas rápidas.';
+        }
+      }, 3000);
+      
+      // Tracking del evento (si tienes Google Analytics)
+      if(typeof gtag !== 'undefined') {
+        gtag('event', 'form_submit', {
+          event_category: 'engagement',
+          event_label: 'lead_form'
+        });
+      }
+      
     }catch(err){
-      if(formMsg) formMsg.textContent = 'No se pudo enviar. Inténtalo más tarde.';
+      console.error('Form submission error:', err);
+      if(formMsg) {
+        formMsg.innerHTML = '❌ Error de conexión. <a href="#contacto" onclick="location.reload()">Intentar nuevamente</a>';
+        formMsg.style.color = '#ef4444';
+      }
     }
   });
 }
+
+// ===== Funcionalidades adicionales para botones =====
+(function(){
+  // Tracking de clics en botones importantes
+  const trackButton = (element, action, category = 'button') => {
+    if(typeof gtag !== 'undefined') {
+      gtag('event', 'click', {
+        event_category: category,
+        event_label: action
+      });
+    }
+    console.log(`Button clicked: ${action}`);
+  };
+
+  // Botones de CTA principales
+  document.querySelectorAll('a[href="#contacto"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      trackButton(btn, 'cta_contact', 'conversion');
+    });
+  });
+
+  // Botones de suscripción
+  document.querySelectorAll('.btn--primary, .btn--ghost').forEach(btn => {
+    if(btn.textContent.includes('Comenzar') || btn.textContent.includes('VIP')) {
+      btn.addEventListener('click', () => {
+        trackButton(btn, 'subscription_interest', 'conversion');
+      });
+    }
+  });
+
+  // Botón del regalo secreto
+  const giftLink = document.querySelector('a[href*="drive.google.com"]');
+  if(giftLink) {
+    giftLink.addEventListener('click', () => {
+      trackButton(giftLink, 'gift_download', 'engagement');
+      
+      // Mostrar mensaje de confirmación
+      setTimeout(() => {
+        if(confirm('🎁 ¡Genial! El regalo se está abriendo. ¿Te gustaría agendar una consulta gratuita para maximizar su uso?')) {
+          document.querySelector('#contacto').scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 1000);
+    });
+  }
+
+  // WhatsApp button tracking
+  const waButton = document.querySelector('.wa-float');
+  if(waButton) {
+    waButton.addEventListener('click', () => {
+      trackButton(waButton, 'whatsapp_contact', 'conversion');
+    });
+  }
+})();
+
+// ===== Mejoras en la navegación =====
+(function(){
+  // Smooth scroll mejorado para todos los enlaces internos
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href');
+      const targetElement = document.querySelector(targetId);
+      
+      if(targetElement) {
+        const offsetTop = targetElement.offsetTop - 80; // Compensar navbar
+        window.scrollTo({
+          top: offsetTop,
+          behavior: 'smooth'
+        });
+        
+        // Cerrar menú móvil si está abierto
+        const menu = document.getElementById('navmenu');
+        const toggle = document.querySelector('.nav__toggle');
+        if(menu && toggle) {
+          menu.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      }
+    });
+  });
+})();
+
+// ===== Notificaciones toast =====
+(function(){
+  const showToast = (message, type = 'info', duration = 3000) => {
+    // Crear toast si no existe
+    let toast = document.getElementById('toast');
+    if(!toast) {
+      toast = document.createElement('div');
+      toast.id = 'toast';
+      toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        z-index: 1000;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        max-width: 300px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      `;
+      document.body.appendChild(toast);
+    }
+
+    // Estilos según tipo
+    const colors = {
+      success: '#22c55e',
+      error: '#ef4444',
+      warning: '#f59e0b',
+      info: '#3b82f6'
+    };
+
+    toast.style.background = colors[type] || colors.info;
+    toast.textContent = message;
+    
+    // Mostrar
+    toast.style.transform = 'translateX(0)';
+    
+    // Ocultar después del tiempo especificado
+    setTimeout(() => {
+      toast.style.transform = 'translateX(100%)';
+    }, duration);
+  };
+
+  // Hacer disponible globalmente
+  window.showToast = showToast;
+})();
 
 // ===== Exit-intent modal (mejorado - menos molesto) =====
 (function(){
