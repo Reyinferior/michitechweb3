@@ -51,11 +51,50 @@ img{max-width:100%;height:auto;display:block}
 .btn:hover{transform:translateY(-2px)}
 
 /* HERO */
-.hero{ min-height: 100vh; min-height: 100svh; position:relative; isolation:isolate; display: flex; align-items: center; }
-.hero__bg{position:absolute; inset:0; background:linear-gradient(135deg,var(--primary-1) 0%,var(--primary-2) 25%,var(--violet) 65%,var(--brand) 100%)}
-.hero__bg::before{ content:""; position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 -120px 180px rgba(0,0,0,.25), inset 0 60px 120px rgba(0,0,0,.15) }
-.hero__bg::after{ content:""; position:absolute; inset:0; pointer-events:none; opacity:.06; background:radial-gradient(1200px 800px at 10% 20%, #fff 0%, transparent 60%), radial-gradient(900px 600px at 90% 80%, #fff 0%, transparent 60%); mix-blend-mode:soft-light }
-.hero__content{position:relative;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:64px;color:#fff;padding-block:clamp(40px, 8vh, 60px);min-height:calc(100vh - 140px);min-height:calc(100svh - 140px)}
+.hero{ 
+  height: 100vh; 
+  height: 100svh; 
+  position: relative; 
+  isolation: isolate; 
+  display: flex; 
+  align-items: center; 
+  overflow: hidden;
+}
+.hero__bg{
+  position: absolute; 
+  inset: 0; 
+  background: linear-gradient(135deg,var(--primary-1) 0%,var(--primary-2) 25%,var(--violet) 65%,var(--brand) 100%);
+}
+.hero__bg::before{ 
+  content: ""; 
+  position: absolute; 
+  inset: 0; 
+  pointer-events: none; 
+  box-shadow: inset 0 -120px 180px rgba(0,0,0,.25), inset 0 60px 120px rgba(0,0,0,.15);
+}
+.hero__bg::after{ 
+  content: ""; 
+  position: absolute; 
+  inset: 0; 
+  pointer-events: none; 
+  opacity: .06; 
+  background: radial-gradient(1200px 800px at 10% 20%, #fff 0%, transparent 60%), radial-gradient(900px 600px at 90% 80%, #fff 0%, transparent 60%); 
+  mix-blend-mode: soft-light;
+}
+.hero__content{
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  align-items: center;
+  gap: clamp(32px, 6vw, 64px);
+  color: #fff;
+  height: 100%;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 20px);
+}
 .hero__text{ max-width:64ch }
 .hero__text h1{ margin:0 0 22px; font-size: clamp(2rem, 4.6vw, 3.3rem); letter-spacing:-0.01em; line-height:1.18; font-weight:900; text-wrap:balance }
 .hero__text p{margin:0 0 26px;font-size:clamp(1rem,1.8vw,1.2rem);color:#e5e7eb;opacity:.95; max-width:60ch }
@@ -1165,6 +1204,18 @@ section{ scroll-margin-top: 80px }
     max-width:500px;
     margin:0 auto;
   }
+  
+  /* Quiénes somos - hero section responsive */
+  #quienes-somos .grid[style*="1.2fr"]{
+    grid-template-columns:1fr !important;
+    gap:32px !important;
+    text-align:center;
+  }
+  
+  /* Stats en tablet - mantener horizontal */
+  #quienes-somos .grid[style*="1.2fr"] > div:first-child > div[style*="display: flex"]{
+    justify-content:center !important;
+  }
 }
 
 @media (max-width: 768px){
@@ -1199,15 +1250,68 @@ section{ scroll-margin-top: 80px }
     grid-template-columns:1fr;
   }
   
-  /* Quiénes somos - stack vertical en móvil */
+  /* Quiénes somos - hero section responsive */
   #quienes-somos .grid[style*="1.2fr"]{
     grid-template-columns:1fr !important;
     gap:24px !important;
+    text-align:center;
   }
   
-  /* Proceso en móvil */
-  #quienes-somos .grid[style*="repeat(auto-fit"]{
-    grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)) !important;
+  /* Stats en móvil - stack vertical */
+  #quienes-somos .grid[style*="1.2fr"] > div:first-child > div[style*="display: flex"]{
+    flex-direction:column !important;
+    gap:16px !important;
+    align-items:center !important;
+  }
+  
+  /* Valores principales - grid responsive */
+  #quienes-somos .grid[style*="repeat(auto-fit, minmax(280px"]{
+    grid-template-columns:1fr !important;
+    gap:20px !important;
+  }
+  
+  /* Cards de valores más compactas en móvil */
+  #quienes-somos .card{
+    padding:20px !important;
+    text-align:center !important;
+  }
+  
+  /* Iconos de valores más pequeños */
+  #quienes-somos .card > div[style*="width: 60px"]{
+    width:50px !important;
+    height:50px !important;
+    font-size:20px !important;
+    margin:0 auto 12px !important;
+  }
+  
+  /* Títulos de valores más pequeños */
+  #quienes-somos .card h3{
+    font-size:1.1rem !important;
+    margin:0 0 10px !important;
+  }
+  
+  /* Proceso en móvil - grid responsive */
+  #quienes-somos div[style*="repeat(auto-fit, minmax(200px"]{
+    grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)) !important;
+    gap:20px !important;
+  }
+  
+  /* Proceso - números más pequeños */
+  #quienes-somos div[style*="repeat(auto-fit, minmax(200px"] div[style*="width: 50px"]{
+    width:40px !important;
+    height:40px !important;
+    font-size:1rem !important;
+  }
+  
+  /* Proceso - títulos más pequeños */
+  #quienes-somos div[style*="repeat(auto-fit, minmax(200px"] h4{
+    font-size:1rem !important;
+    margin:0 0 6px !important;
+  }
+  
+  /* Proceso - texto más pequeño */
+  #quienes-somos div[style*="repeat(auto-fit, minmax(200px"] p{
+    font-size:0.85rem !important;
   }
 }
 
