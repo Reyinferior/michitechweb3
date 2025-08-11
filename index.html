@@ -26,6 +26,7 @@
 
   <!-- CSS -->
   <link rel="stylesheet" href="assets/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
 
   <!-- JSON-LD (ajusta dominio si corresponde) -->
   <script type="application/ld+json">
@@ -770,61 +771,6 @@
     </div>
   </footer>
 
-  <!-- Chatbot con IA -->
-  <div id="aiChatbot" class="chatbot" aria-hidden="true" role="dialog" aria-labelledby="chatbotTitle">
-    <div class="chatbot__header">
-      <div class="chatbot__avatar">
-        <img src="img/mishi-mini.png" width="32" height="32" alt="Mishi AI Assistant">
-      </div>
-      <div class="chatbot__info">
-        <h3 id="chatbotTitle">Mishi AI</h3>
-        <span class="chatbot__status">🟢 En línea</span>
-      </div>
-      <button class="chatbot__close" aria-label="Cerrar chat">×</button>
-    </div>
-    <div class="chatbot__messages" id="chatMessages">
-      <div class="chatbot__message chatbot__message--bot">
-        <div class="chatbot__avatar-small">
-          <img src="img/mishi-mini.png" width="24" height="24" alt="Mishi">
-        </div>
-        <div class="chatbot__bubble">
-          ¡Hola! 👋 Soy Mishi, tu asistente de automatización. ¿En qué puedo ayudarte hoy?
-        </div>
-      </div>
-      <div class="chatbot__suggestions">
-        <button class="chatbot__suggestion" data-message="¿Qué servicios ofrecen?">🤖 Servicios</button>
-        <button class="chatbot__suggestion" data-message="¿Cuánto cuesta automatizar mi negocio?">💰 Precios</button>
-        <button class="chatbot__suggestion" data-message="¿Cómo funciona n8n?">⚡ n8n</button>
-        <button class="chatbot__suggestion" data-message="Quiero una consulta gratuita">📞 Consulta</button>
-      </div>
-    </div>
-    <div class="chatbot__input-area">
-      <div class="chatbot__typing" id="chatTyping" style="display: none;">
-        <div class="chatbot__avatar-small">
-          <img src="img/mishi-mini.png" width="24" height="24" alt="Mishi">
-        </div>
-        <div class="chatbot__typing-indicator">
-          <span></span><span></span><span></span>
-        </div>
-      </div>
-      <form class="chatbot__form" id="chatForm">
-        <input type="text" id="chatInput" placeholder="Escribe tu pregunta..." autocomplete="off" maxlength="200">
-        <button type="submit" aria-label="Enviar mensaje">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-          </svg>
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Botón flotante del chatbot -->
-  <button id="chatbotToggle" class="chatbot-toggle" aria-label="Abrir chat con Mishi AI">
-    <div class="chatbot-toggle__icon">
-      <img src="img/mishi-mini.png" width="32" height="32" alt="Mishi AI">
-    </div>
-    <div class="chatbot-toggle__notification" id="chatNotification">1</div>
-  </button>
 
   <!-- Chat flotante: WhatsApp -->
   <a href="https://wa.me/message/ZKITV4SSWPU3N1" class="wa-float" target="_blank" rel="noopener" aria-label="Chatear por WhatsApp">
@@ -843,6 +789,16 @@
 
   <!-- JS -->
   <script src="assets/app.js" defer></script>
+  
+  <!-- n8n Chat -->
+  <script type="module">
+    import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+    createChat({
+      webhookUrl: 'https://angelm.app.n8n.cloud/webhook/e0ba52cf-9744-428c-b647-e6f86617b0ed/chat'
+    });
+  </script>
+  
   <!-- Botón Volver arriba -->
   <button id="toTop" class="to-top" aria-label="Volver arriba" title="Volver arriba">↑</button>
 
